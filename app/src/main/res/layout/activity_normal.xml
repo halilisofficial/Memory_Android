@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/normalActivityScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:isScrollContainer="true"
+    android:clipToPadding="false"
+    android:background="#0E0E0E"
+    android:scrollbarStyle="outsideOverlay">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <FrameLayout
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:background="#1B1B1B"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                android:src="@android:drawable/ic_menu_gallery" /> </FrameLayout>
+
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Gizlenecek mesajı buraya yazın..."
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888"
+            android:background="#1B1B1B"
+            android:padding="14dp"
+            android:inputType="textMultiLine"
+            android:gravity="top|start"
+            android:minLines="3" />
+
+        <TextView
+            android:id="@+id/tvCharCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0 / 0 Karakter"
+            android:textColor="#BBBBBB"
+            android:textSize="12sp"
+            android:gravity="end"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="14dp"
+            android:layout_marginEnd="4dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnEncode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Mesaj Gizle"
+                android:backgroundTint="#2196F3"/> <Space
+            android:layout_width="12dp"
+            android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/btnDecode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Mesaj Çöz"
+                android:backgroundTint="#4CAF50"/> </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#00E676"
+            android:textSize="14sp"
+            android:padding="14dp"
+            android:layout_marginTop="16dp"
+            android:hint="Sonuç burada görünecek..."
+            android:textColorHint="#555"
+            android:background="#1B1B1B"
+            android:gravity="center"/>
+
+    </LinearLayout>
+</ScrollView>
