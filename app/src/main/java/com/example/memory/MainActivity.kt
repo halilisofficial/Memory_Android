@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 
-//TODO:şifrelenebilecek krakter sayısını yazdır
-//todo:karakter sayısı aşılmış mı kontrol et
-//todo: mesaj yazıp şifrelediğinde fln bazı yerler telefon klavye altında kalıyor
-//todo: mesaj coze tıklanınca memory yazıyor mu kontrolu yap
+
+// bazı durumlarda uygulama cokebilio
+//img kapasite kontrolu yapılmadı
+//memory ile baslamiosa mesaj cözme hatası var
 
 class MainActivity : AppCompatActivity() {
 

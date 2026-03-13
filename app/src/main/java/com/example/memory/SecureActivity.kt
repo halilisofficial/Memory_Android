@@ -31,6 +31,7 @@ class SecureActivity : AppCompatActivity() {
     private lateinit var encodeBtn: Button
     private lateinit var decodeBtn: Button
     private lateinit var secureTvCharCount: TextView
+    private lateinit var tvResult: TextView
     private lateinit var mainLayout: LinearLayout
 
     private var selectedBitmap: Bitmap? = null
@@ -43,24 +44,22 @@ class SecureActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Şifreli Steganografi"
 
-        // Görünümleri Bağla
         imageView = findViewById(R.id.secureimageView)
         messageInput = findViewById(R.id.securemessageInput)
         passwordInput = findViewById(R.id.securepasswordInput)
         encodeBtn = findViewById(R.id.secureencodeBtn)
         decodeBtn = findViewById(R.id.securedecodeBtn)
         secureTvCharCount = findViewById(R.id.secureTvCharCount)
+        tvResult = findViewById(R.id.secureTvResult)
         mainLayout = findViewById(R.id.secureMainLayout)
         val scrollView = findViewById<ScrollView>(R.id.secureActivityScrollView)
 
-        // 1. KLAVYE DÜZENLEMESİ (WindowInsets)
         ViewCompat.setOnApplyWindowInsetsListener(scrollView) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime())
             view.setPadding(0, 0, 0, insets.bottom)
             windowInsets
         }
 
-        // 2. OTOMATİK KAYDIRMA (Fokus zıplamasını önleyen versiyon)
         val focusListener = View.OnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 scrollView.postDelayed({
@@ -71,14 +70,13 @@ class SecureActivity : AppCompatActivity() {
         messageInput.onFocusChangeListener = focusListener
         passwordInput.onFocusChangeListener = focusListener
 
-        // 3. GALERİ VE ODAK TEMİZLİĞİ
         val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 selectedBitmap = uriToBitmap(it)
                 imageView.setImageBitmap(selectedBitmap)
                 val max = calculateMaxChars(selectedBitmap!!)
                 secureTvCharCount.text = "0 / $max Karakter"
-                mainLayout.requestFocus() // Odak zıplamasını engeller
+                mainLayout.requestFocus()
             }
         }
 
@@ -89,7 +87,7 @@ class SecureActivity : AppCompatActivity() {
             passwordInput.text.clear()
         }
 
-        // 4. ŞİFRELE VE GİZLE
+        // ŞİFRELE VE GİZLE
         encodeBtn.setOnClickListener {
             val msg = "Memory:${messageInput.text}"
             val pass = passwordInput.text.toString()
@@ -122,7 +120,7 @@ class SecureActivity : AppCompatActivity() {
             }
         }
 
-        // 5. ÇÖZ
+        // ÇÖZ
         decodeBtn.setOnClickListener {
             val pass = passwordInput.text.toString()
             val bitmap = selectedBitmap ?: return@setOnClickListener
@@ -138,9 +136,9 @@ class SecureActivity : AppCompatActivity() {
                 val plain = decryptAES(bytes, pass)
 
                 if (plain.startsWith("Memory:")) {
-                    messageInput.setText(plain.substring(7))
+                    tvResult.text = plain.substring(7)
                 } else {
-                    messageInput.setText(plain)
+                    tvResult.text = plain
                 }
 
                 val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -149,33 +147,40 @@ class SecureActivity : AppCompatActivity() {
 
                 Toast.makeText(this, "Mesaj Çözüldü", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                messageInput.setText("Şifre yanlış veya veri bozuk")
+                tvResult.text = "Şifre yanlış veya veri bozuk"
             }
         }
 
-        // 6. CANLI SAYAÇ
+        // CANLI SAYAÇ
         messageInput.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 selectedBitmap?.let {
                     val max = calculateMaxChars(it)
                     val current = s?.length ?: 0
+
+                    // AES + Base64 overhead hesabı
+                    val msgWithPrefix = "Memory:$s"
+                    val aesOverhead = 16 + 16 + 16 // salt + iv + padding
+                    val aesSize = msgWithPrefix.toByteArray().size + aesOverhead
+                    val base64Size = ((aesSize + 2) / 3) * 4 // Base64 formülü
+
                     secureTvCharCount.text = "$current / $max Karakter"
 
-                    if (current > max) {
+                    if (base64Size > max) {
                         secureTvCharCount.setTextColor(android.graphics.Color.RED)
                         encodeBtn.isEnabled = false
                     } else {
                         secureTvCharCount.setTextColor(android.graphics.Color.WHITE)
                         encodeBtn.isEnabled = true
                     }
+                } ?: run {
+                    secureTvCharCount.text = "Önce resim seçiniz"
                 }
             }
             override fun afterTextChanged(s: android.text.Editable?) {}
         })
     }
-
-    // --- MÜHENDİSLİK FONKSİYONLARI ---
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
@@ -183,7 +188,6 @@ class SecureActivity : AppCompatActivity() {
     }
 
     private fun calculateMaxChars(bitmap: Bitmap): Int {
-        // AES ve Base64 için payı 60'a çıkardım, daha güvenli.
         return ((bitmap.width * bitmap.height * 3) / 8) - 60
     }
 

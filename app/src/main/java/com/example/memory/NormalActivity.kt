@@ -126,7 +126,8 @@ class NormalActivity : AppCompatActivity() {
         btnDecode.setOnClickListener {
             selectedBitmap?.let { bitmap ->
                 val decoded = extractMessage(bitmap)
-                tvResult.text = decoded
+                val clean = if (decoded.startsWith("Memory:")) decoded.substring(7) else decoded
+                tvResult.text = clean
             }
         }
 
@@ -138,9 +139,13 @@ class NormalActivity : AppCompatActivity() {
                 if (currentBitmap != null) {
                     val maxChars = calculateMaxChars(currentBitmap)
                     val currentChars = s?.length ?: 0
+
+                    // "Memory:" prefix dahil gerçek boyut
+                    val realSize = "Memory:$s".toByteArray(Charsets.UTF_8).size
+
                     tvCharCount.text = "$currentChars / $maxChars Karakter"
 
-                    if (currentChars > maxChars) {
+                    if (realSize > maxChars) {
                         tvCharCount.setTextColor(android.graphics.Color.RED)
                         btnEncode.isEnabled = false
                     } else {
@@ -153,7 +158,6 @@ class NormalActivity : AppCompatActivity() {
             }
             override fun afterTextChanged(s: android.text.Editable?) {}
         }
-
         etMessage.addTextChangedListener(textWatcher)
         //
 
