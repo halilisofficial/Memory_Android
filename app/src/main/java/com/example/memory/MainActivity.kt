@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 
 
 // bazı durumlarda uygulama cokebilio
-//img kapasite kontrolu yapılmadı
 //memory ile baslamiosa mesaj cözme hatası var
 
 class MainActivity : AppCompatActivity() {

@@ -188,7 +188,7 @@ class SecureActivity : AppCompatActivity() {
     }
 
     private fun calculateMaxChars(bitmap: Bitmap): Int {
-        return ((bitmap.width * bitmap.height * 3) / 8) - 60
+        return ((bitmap.width * bitmap.height * 3) / 8) - 50
     }
 
     private fun uriToBitmap(uri: Uri): Bitmap {
